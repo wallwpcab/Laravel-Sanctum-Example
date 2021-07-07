@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
@@ -17,8 +19,7 @@ class UserController extends Controller
 
         $user = User::create([
             'name' => $fields['name'],
-            'email' => $fields['email'],
-            'password' => bcrypt($fields['password'])
+            'password' => bcrypt($fields['password'])   
         ]);
         
         $token = $user->createToken('myAppToken')->plainTextToken;
@@ -34,5 +35,21 @@ class UserController extends Controller
 
     public function showAll() {
         return User::all();
+    }
+
+    public function login(Request $request) {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required'
+        ]);
+        if (Auth::attempt($request->only('email', 'password'))) {
+            $user = Auth::user();
+            $response["user"] = $user->name;
+            $response["token"] = $user->createToken('myAppToken')->plainTextToken;
+            return response()->json($response, 200);
+        }
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect']
+        ]);
     }
 }

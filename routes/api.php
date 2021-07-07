@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,10 +21,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/register', [UserController::class, 'register']);
-
-Route::group(['middleware' => ['auth:sanctum']], function () {
-    // Route::resource('/product', ProductController::class);
+Route::post('/register', [UserController::class, 'register'])->name('register');
+Route::get("/users", [UserController::class, "showAll"]);
+Route::post("/login", [UserController::class, "login"])->name('login');
+Route::middleware('auth:sanctum')->group( function () {
     Route::get('/product', [ProductController::class, 'index']);
     Route::get("/product/{id}", [ProductController::class, 'show']);
     Route::get('/product/search/{name}', [ProductController::class, 'search']);
