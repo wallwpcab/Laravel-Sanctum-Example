@@ -52,4 +52,18 @@ class UserController extends Controller
             'email' => ['The provided credentials are incorrect']
         ]);
     }
+
+    public function logout(Request $request) {
+        $test = $request->user()->currentAccessToken()->delete();
+        if($test) {
+            return response()->json([
+                "status" => true,
+                "message" => "Logout succesfully"
+            ]);
+        }
+        return response()->json([
+            "status" => false,
+            "message" => "Logout failed"
+        ]);
+    }
 }
