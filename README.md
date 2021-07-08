@@ -29,4 +29,4 @@ php artisan serve
 <h3>API Doc</h3>
 <p>If you need API documentation, this link will bring you to postman documentation of this project</p>
 
-[API Doc](https://documenter.getpostman.com/view/13811915/Tzm5JHBC)
+[API Doc](https://documenter.getpostman.com/view/13811915/Tzm5Jcac)
