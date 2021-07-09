@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
     //
     public function register(Request $request) {
@@ -27,14 +27,12 @@ class UserController extends Controller
             'user' => $user,
             'token' => $token
         ];
-        return response()->json([
-            'status' => true,
-            'message' => $response
-        ])->setStatusCode(201);
+        return $this->sendResponse($response, "New User Registered", 201);
     }
 
     public function showAll() {
-        return User::all();
+        $users = User::all();
+        return $this->sendResponse($users, 'All user', 200);
     }
 
     public function login(Request $request) {
@@ -46,7 +44,8 @@ class UserController extends Controller
             $user = Auth::user();
             $response["user"] = $user->name;
             $response["token"] = $user->createToken('myAppToken')->plainTextToken;
-            return response()->json($response, 200);
+            // return response()->json($response, 200);
+            $this->sendResponse($response, "New Login", 200);
         }
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect']
@@ -54,16 +53,10 @@ class UserController extends Controller
     }
 
     public function logout(Request $request) {
-        $test = $request->user()->currentAccessToken()->delete();
-        if($test) {
-            return response()->json([
-                "status" => true,
-                "message" => "Logout succesfully"
-            ]);
+        $logout = $request->user()->currentAccessToken()->delete();
+        if($logout) {
+            return $this->sendResponse($logout, 'Logout success', 200);
         }
-        return response()->json([
-            "status" => false,
-            "message" => "Logout failed"
-        ]);
+        return $this->sendError($logout, 'Logout failed');
     }
 }
