@@ -16,15 +16,9 @@ class ProductController extends BaseController
     {
         $product = Product::all();
         if(isset($product)) {
-            return response()->json([
-                'status' => true,
-                'message' => $product
-            ]);
+            return $this->sendResponse($product, 'Product list');
         }
-        return response($status=404)->json([
-            'status' => false,
-            'message' => $product
-        ])->setStatusCode(404);
+        return $this->sendError($product, 'No Product', 404);
     }
 
     /**
@@ -41,10 +35,7 @@ class ProductController extends BaseController
             'price' => 'required'
         ]);
         $product = Product::create($request->all());
-        return response()->json([
-            'status' => true,
-            'message' => $product
-        ]);
+        return $this->sendResponse($product, 'New product', 201);
     }
 
     /**
@@ -58,15 +49,9 @@ class ProductController extends BaseController
         //
         $product = Product::find($id);
         if(isset($product)) {
-            return response()->json([
-                'status' => true,
-                'message' => $product
-            ]);
+            return $this->sendResponse($product, 'Product with id: ' . $id, 200);
         }
-        return response()->json([
-            'status' => false,
-            'message' => $product
-        ])->setStatusCode(404);
+        return $this->sendError($product, 'Not found product with id: '. $id, 404);
     }
 
     /**
@@ -81,15 +66,9 @@ class ProductController extends BaseController
         $product = Product::find($id);
         if(isset($product)) {
             $product->update($request->all());
-            return response()->json([
-                'status' => true,
-                'message' => $product
-            ]);
+            return $this->sendResponse($product, 'Update product id: '. $id . 'Success', 200);
         }
-        return response()->json([
-            'status' => false,
-            'message' => $product
-        ]);
+        return $this->sendError($product, 'Update failed');
     }
 
     /**
@@ -101,10 +80,7 @@ class ProductController extends BaseController
     public function destroy($id)
     {
         $product = Product::destroy($id);
-        return response()->json([
-            'status' => true,
-            'message' => $product
-        ]);
+        return $this->sendResponse($product, 'Destroy product id: '. $id);
     }
 
         /**
@@ -116,9 +92,6 @@ class ProductController extends BaseController
     public function search($name)
     {
         $product = Product::where('name', 'like', '%'.$name.'%')->get();
-        return response()->json([
-            'status' => true,
-            'message' => $product
-        ]);
+        return $this->sendResponse($product, 'Found product');
     }
 }
